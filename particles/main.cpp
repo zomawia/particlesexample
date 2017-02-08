@@ -4,9 +4,12 @@
 #include "particles.h"
 #include "particleEmitter.h"
 #include <time.h>
+#include "ObjectPool.h"
 
 void main() {
 	sfw::initContext();
+
+	ObjectPool pool(20);
 
 	unsigned sprite = sfw::loadTextureMap("../res/particle_sprite.png");
 
@@ -27,10 +30,10 @@ void main() {
 	pe.dimLoEnd = vec2{ 256,256 };
 	pe.dimHiEnd = vec2{ 512, 512 };
 
-	pe.colLoStart.ui_color = NONE;
-	pe.colHiStart.ui_color = NONE;
-	pe.colLoEnd.ui_color = WHITE;
-	pe.colHiEnd.ui_color = WHITE;
+	pe.colLoStart.ui_color = WHITE;
+	pe.colHiStart.ui_color = RED;
+	pe.colLoEnd.ui_color = NONE;
+	pe.colHiEnd.ui_color = NONE;
 
 	pe.lifeSpanLo = 6.9f;
 	pe.lifeSpanHi = 12.5f;	
