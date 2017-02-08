@@ -11,6 +11,10 @@ void main() {
 
 	ObjectPool pool(20);
 
+	for (int i = 0; i < 10; ++i) pool.push();
+
+	for each(auto part in pool) part.isActive();
+
 	unsigned sprite = sfw::loadTextureMap("../res/particle_sprite.png");
 
 	particleEmitter pe, pe2;

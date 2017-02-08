@@ -10,16 +10,12 @@ class ObjectPool {
 	};
 
 	_intern *m_data;
-
-	////////////////// 3 separate arrays
-	//size_t *m_next;
-	//particle *m_data;
-	//bool *m_open;
-
 	size_t m_size;
+	size_t openHead;
+	size_t fillHead;
 
 public:
-	ObjectPool(size_t a_size) : m_size(a_size) {
+	ObjectPool(size_t a_size) : m_size(a_size), openHead(0), fillHead(m_size) {
 		m_data = new _intern[m_size];
 
 		for (size_t i = 0; i < m_size; ++i) {
@@ -31,6 +27,8 @@ public:
 	class iterator {	//faux pointer
 		ObjectPool *m_ref;
 		size_t m_idx;
+
+		friend class ObjectPool;
 
 		iterator(ObjectPool *a_ref, size_t a_idx) :	m_ref(a_ref), m_idx(a_idx) {}
 
@@ -51,8 +49,78 @@ public:
 
 		operator bool() const { m_ref != nullptr && 
 			m_idx < m_ref->m_size && 
-			!m_ref->m_data[m_idx].open; }
+			!m_ref->m_data[m_idx].open; return this;
+		}
 		
 	};
 
+	//push the value into the pool and generate an iterator
+	iterator push(const particle &val = particle()) {
+		if (openHead >= m_size) return iterator();
+
+		size_t idx = openHead;
+
+		m_data[idx].data = val;
+		m_data[idx].open = false;
+
+		openHead = m_data[openHead].next;
+
+		if (idx < fillHead) {	// if inserted before the head, become the head
+			m_data[idx].next = fillHead;
+			fillHead = idx;
+		}
+		else {					// otherwise there must be something filled to our left
+
+			size_t left = idx;
+			while (m_data[--left].open);
+
+			m_data[idx].next = m_data[left].next;
+			m_data[left].next = idx;
+
+			m_data[openHead];
+		}
+		return iterator(this, idx);
+	}
+
+	iterator pop(iterator it) {
+		if (!(it && it.m_ref == this)) return iterator();
+
+		size_t idx = it.m_idx;
+		++it;
+
+		// if popping the closed head, update the close list
+		// if popping left of the vacant head, update the vacant head
+		// if there was a closed next pointing to this indx, update it
+		
+		m_data[idx].open = true;
+		
+		//////////////////////////////////////
+		// for fixing the filled list pointers
+		if (idx == fillHead) {fillHead = m_data[idx].next;}
+		else { //there must be a closed index pointing to it
+			size_t left = idx;
+			while (m_data[--left].open);	//walk left until it hit the thing pointing at it
+			m_data[left].next = m_data[idx].next; //tell it to point at what it was prev pointing to
+		}
+
+		///////////////////////////////
+		// For inserting the open space
+		if (idx < openHead) {
+			m_data[idx].next = openHead;
+			openHead = idx;
+		}
+
+		// if vacancy to the left
+		else {
+			size_t left = idx;
+			while (!m_data[--left].open);
+
+			m_data[idx].next = m_data[left].next;
+			m_data[left].next = idx;
+		}
+		return it;
+	}
+
+	iterator begin() { return iterator(this, fillHead); }
+	iterator end() { return iterator(this, m_size); }
 };
