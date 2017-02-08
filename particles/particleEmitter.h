@@ -1,21 +1,25 @@
 #pragma once
 #include "particles.h"
+#include "ObjectPool.h"
 
-#define PART_SIZE 512
+#define PART_SIZE 51200
 
 //factory
 class particleEmitter {
 	//data structure to store all particles
-	particle particles[PART_SIZE];
+	//particle particles[PART_SIZE];
+	ObjectPool <particle> particles;
 	
 	void emit() {
-		for (int i = 0; i < PART_SIZE; ++i)
-		{
-			if (!particles[i].isActive()) {
-				particles[i] = _generate();
-				return;
-			}
-		}
+
+		//for (int i = 0; i < PART_SIZE; ++i)
+		//{
+		//	if (!particles[i].isActive()) {
+		//		particles[i] = _generate();
+		//		return;
+		//	}
+		//}
+		particles.push(_generate());
 	}
 
 	particle _generate() {
@@ -23,15 +27,15 @@ class particleEmitter {
 		part.pos = pos;
 		part.sprite = sprite;
 
-		part.vel = randDir(angleLo, angleHi) * lerp(speedLo, speedHi, rand01());
+		part.vel = randDirr(angleLo, angleHi) * lerp(speedLo, speedHi, rand01());
 
 		part.lifespan = lerp(lifeSpanLo, lifeSpanHi, rand01());
 
 		part.sColor = lerp(colLoStart, colHiStart, rand01());
 		part.eColor = lerp(colLoEnd, colHiEnd, rand01());
 
-		part.sDim = randRange(dimLoStart, dimHiStart);
-		part.eDim = randRange(dimLoEnd, dimHiEnd);
+		part.sDim = randRanger(dimLoStart, dimHiStart);
+		part.eDim = randRanger(dimLoEnd, dimHiEnd);
 
 		part.lifetime = 0;
 
@@ -44,7 +48,7 @@ public:
 	//emissions
 	float emitRateLo, emitRateHi;
 	
-	particleEmitter() : emissionTimer(0) {}
+	particleEmitter() : emissionTimer(0), particles(PART_SIZE) {}
 
 
 	//defaults
@@ -59,9 +63,15 @@ public:
 	float lifeSpanLo, lifeSpanHi;	
 
 	void update(float dt) {
-		for (int i = 0; i < PART_SIZE; ++i) {
-			if (particles[i].isActive())
-				particles[i].refresh(dt);			
+		//for (int i = 0; i < PART_SIZE; ++i) {
+		//	if (particles[i].isActive())
+		//		particles[i].refresh(dt);			
+		//}
+
+		for (auto it = particles.begin(); it != particles.end();) {
+			it->refresh(dt);
+			if (it->isActive()) it++;
+			else				it.free(); //similar to ++ but will find next active
 		}
 
 		emissionTimer -= dt;

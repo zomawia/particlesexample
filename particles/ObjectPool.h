@@ -2,9 +2,10 @@
 
 #include "particles.h"
 
+template <typename T>
 class ObjectPool {
 	struct _intern {
-		particle data;
+		T data;
 		bool open;
 		size_t next;
 	};
@@ -42,13 +43,13 @@ public:
 	public:
 		iterator() : m_ref(nullptr), m_idx(0) {};
 
-		particle &operator*() { return m_ref->m_data[m_idx].data; }		//*this	(deref operator)
-		particle *operator->() { return &m_ref->m_data[m_idx].data; }	//this->(indirection oper)
-		particle *operator&(){return &m_ref->m_data[m_idx].data; } // &this reference of operator
+		T &operator*() { return m_ref->m_data[m_idx].data; }		//*this	(deref operator)
+		T *operator->() { return &m_ref->m_data[m_idx].data; }	//this->(indirection oper)
+		T *operator&(){return &m_ref->m_data[m_idx].data; } // &this reference of operator
 
-		const particle &operator* () const { return  m_ref->m_data[m_idx].data; }		//*this(const deref)
-		const particle *operator->() const { return &m_ref->m_data[m_idx].data; }	//this->(const indirect)
-		const particle *operator& () const { return &m_ref->m_data[m_idx].data; }	//&this ref of operator)
+		const T &operator* () const { return  m_ref->m_data[m_idx].data; }		//*this(const deref)
+		const T *operator->() const { return &m_ref->m_data[m_idx].data; }	//this->(const indirect)
+		const T *operator& () const { return &m_ref->m_data[m_idx].data; }	//&this ref of operator)
 
 		iterator &operator++() { m_idx = m_ref->m_data[m_idx].next; return *this; }	// (prefix increment)
 		iterator operator++(int) { auto that = *this; operator++(); return that; }	// (postix increment)
@@ -67,7 +68,7 @@ public:
 	};
 
 	//push the value into the pool and generate an iterator
-	iterator push(const particle &val = particle()) {
+	iterator push(const T &val = T()) {
 		if (openHead >= m_size) return iterator();
 
 		size_t idx = openHead;

@@ -1,6 +1,7 @@
 #pragma once
-#include"sfwdraw.h"
+#include "sfwdraw.h"
 #include "maths.h"
+//#include "collision.h"
 
 struct particle {
 	unsigned sprite;

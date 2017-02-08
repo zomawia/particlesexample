@@ -1,40 +1,26 @@
 #include <iostream>
 #include "sfwdraw.h"
 #include "maths.h"
-#include "particles.h"
 #include "particleEmitter.h"
 #include <time.h>
-#include "ObjectPool.h"
 
 void main() {
 	sfw::initContext();
-
-	ObjectPool pool(20);
-
-	auto it = pool.push();
-
-	if ((bool)it == true) {
-
-	}
-	
-	for (int i = 0; i < 10; ++i) pool.push();
-
-	for each(auto part in pool) part.isActive();
 
 	unsigned sprite = sfw::loadTextureMap("../res/particle_sprite.png");
 
 	particleEmitter pe, pe2;
 
-	pe.emitRateLo = .000001f;
-	pe.emitRateHi = .000003f;
+	pe.emitRateLo = .001f;
+	pe.emitRateHi = .003f;
 
 	pe.sprite = sprite;
 
-	pe.pos = vec2{ 400,300 };
-	pe.angleLo = 0;
-	pe.angleHi = 360;
-	pe.speedLo = 60;
-	pe.speedHi = 100;
+	pe.pos = vec2{ 400,5 };
+	pe.angleLo = 45;
+	pe.angleHi = 135;
+	pe.speedLo = 120;
+	pe.speedHi = 320;
 	pe.dimLoStart = vec2{ 8,8 };
 	pe.dimHiStart = vec2{ 32,32 };
 	pe.dimLoEnd = vec2{ 256,256 };

@@ -74,10 +74,10 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../sfw</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../sfw;C:\Users\zomawai.sailo\Documents\Visual Studio 2015\Projects\MathLib\MathLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>../sfw</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\zomawai.sailo\Documents\Visual Studio 2015\Projects\MathLib\MathLib;../sfw</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfw_deb.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -125,6 +125,7 @@
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="particleEmitter.h" />
     <ClInclude Include="particles.h" />
+    <ClInclude Include="components.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
