@@ -2,29 +2,42 @@
 #include "sfwdraw.h"
 #include "maths.h"
 #include "particles.h"
+#include "particleEmitter.h"
+#include <time.h>
 
 void main() {
 	sfw::initContext();
 
 	unsigned sprite = sfw::loadTextureMap("../res/particle_sprite.png");
 
-	particle part;
-	part.sprite = sprite;
-	part.pos = vec2{ 400,0 };
-	part.vel = vec2{ 0,20 };
-	part.sDim = vec2{ 8,8 };
-	part.eDim = vec2{ 256, 256 };
-	part.sColor.ui_color = GREEN;
-	part.eColor.ui_color = BLUE;
-	part.lifespan = 12.f;
-	part.lifetime = 0;
+	particleEmitter pe, pe2;
+
+	pe.emitRateLo = .000001f;
+	pe.emitRateHi = .000003f;
+
+	pe.sprite = sprite;
+
+	pe.pos = vec2{ 400,300 };
+	pe.angleLo = 0;
+	pe.angleHi = 360;
+	pe.speedLo = 60;
+	pe.speedHi = 100;
+	pe.dimLoStart = vec2{ 8,8 };
+	pe.dimHiStart = vec2{ 32,32 };
+	pe.dimLoEnd = vec2{ 256,256 };
+	pe.dimHiEnd = vec2{ 512, 512 };
+
+	pe.colLoStart.ui_color = NONE;
+	pe.colHiStart.ui_color = NONE;
+	pe.colLoEnd.ui_color = WHITE;
+	pe.colHiEnd.ui_color = WHITE;
+
+	pe.lifeSpanLo = 6.9f;
+	pe.lifeSpanHi = 12.5f;	
 
 	while (sfw::stepContext()) {
 		float dt = sfw::getDeltaTime();
-		
-		part.refresh(dt);
-
-
+		pe.update(dt);
 	}
 
 	sfw::termContext();
