@@ -43,9 +43,9 @@ public:
 	public:
 		iterator() : m_ref(nullptr), m_idx(0) {};
 
-		T &operator*() { return m_ref->m_data[m_idx].data; }		//*this	(deref operator)
+		T &operator*()	{ return m_ref->m_data[m_idx].data; }		//*this	(deref operator)
 		T *operator->() { return &m_ref->m_data[m_idx].data; }	//this->(indirection oper)
-		T *operator&(){return &m_ref->m_data[m_idx].data; } // &this reference of operator
+		T *operator&()	{ return &m_ref->m_data[m_idx].data; } // &this reference of operator
 
 		const T &operator* () const { return  m_ref->m_data[m_idx].data; }		//*this(const deref)
 		const T *operator->() const { return &m_ref->m_data[m_idx].data; }	//this->(const indirect)
@@ -57,12 +57,12 @@ public:
 		bool operator==(const iterator &O) const { return m_ref == O.m_ref && m_idx == O.m_idx; }
 		bool operator!=(const iterator &O) const { return !(*this == O); }
 
-		operator bool() const { m_ref != nullptr && 
+		operator bool() const { return m_ref != nullptr && 
 			m_idx < m_ref->m_size && 
-			!m_ref->m_data[m_idx].open; return this;
+			!m_ref->m_data[m_idx].open;
 		}
-		operator particle*() { return operator&(); }
-		operator const particle*() const { return operator&(); }
+		//operator T*() { return operator&(); }
+		//operator const T*() const { return operator&(); }
 
 		iterator &free() { return *this = m_ref->pop(*this); };
 	};

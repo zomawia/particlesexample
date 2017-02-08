@@ -2,16 +2,14 @@
 
 #include "maths.h"
 #include "sfwdraw.h"
-#include "ObjectPool.h"
 
 struct transform {
 	vec2 position, scale;
-	float angle;
+	float angle = 0;
 };
 
 struct rigidbody {
-	vec2 velocity, accel;
-	
+	vec2 velocity = vec2{ 0,0 }, accel = vec2{ 0,0 };	
 	void integrate(transform &T, float dt) {
 		velocity = velocity + accel * dt;
 		T.position = velocity * dt;		
@@ -38,10 +36,11 @@ struct sprite {
 
 struct controller {
 	float speed;
-	void poll(transform &T, rigidbody &RB) {
+	void poll(transform &T, rigidbody &RB)
+	{
 		vec2 mouse = vec2{ sfw::getMouseX(), sfw::getMouseY() };
 
-		RB.accel = normal(T.position - mouse) * speed;
+		RB.accel = normal(mouse - T.position) * speed;
 	}
 };
 
@@ -51,25 +50,5 @@ struct particle {
 	void update(const lifetime &life, transform &trans, sprite &sprt){
 		trans.scale = lerp(sDim, eDim, life.pctAlive());
 		sprt.tint = lerp(sColor, eColor, life.pctAlive());
-	}
-};
-
-//templated alias or templated typedef
-template<typename T> using obpool = ObjectPool<T>::iterator;
-struct Entity {
-	obpool<transform>	tran;
-	obpool<rigidbody>	rdby;
-	obpool<controller>	cont;
-	obpool<sprite>		sprt;
-	obpool<lifetime>	life;
-	obpool<particle>	part;
-
-	void onFree() {
-		if(tran)tran.free();
-		if(rdby)rdby.free();
-		if(cont)cont.free();
-		if(sprt)sprt.free();
-		if(life)life.free();
-		if(part)part.free();
 	}
 };

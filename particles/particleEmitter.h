@@ -8,7 +8,7 @@
 class particleEmitter {
 	//data structure to store all particles
 	//particle particles[PART_SIZE];
-	ObjectPool <particle> particles;
+	ObjectPool <particles> parts;
 	
 	void emit() {
 
@@ -19,11 +19,11 @@ class particleEmitter {
 		//		return;
 		//	}
 		//}
-		particles.push(_generate());
+		parts.push(_generate());
 	}
 
-	particle _generate() {
-		particle part;
+	particles _generate() {
+		particles part;
 		part.pos = pos;
 		part.sprite = sprite;
 
@@ -48,7 +48,7 @@ public:
 	//emissions
 	float emitRateLo, emitRateHi;
 	
-	particleEmitter() : emissionTimer(0), particles(PART_SIZE) {}
+	particleEmitter() : emissionTimer(0), parts(PART_SIZE) {}
 
 
 	//defaults
@@ -68,7 +68,7 @@ public:
 		//		particles[i].refresh(dt);			
 		//}
 
-		for (auto it = particles.begin(); it != particles.end();) {
+		for (auto it = parts.begin(); it != parts.end();) {
 			it->refresh(dt);
 			if (it->isActive()) it++;
 			else				it.free(); //similar to ++ but will find next active

@@ -3,7 +3,7 @@
 #include "maths.h"
 //#include "collision.h"
 
-struct particle {
+struct particles {
 	unsigned sprite;
 	vec2 pos, vel;
 	vec2 sDim, eDim;
@@ -11,7 +11,7 @@ struct particle {
 
 	float lifetime, lifespan;
 
-	particle() : lifespan(-1), lifetime(0) {}
+	particles() : lifespan(-1), lifetime(0) {}
 
 	bool refresh(float dt) {
 		lifetime += dt;
