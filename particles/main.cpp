@@ -11,6 +11,12 @@ void main() {
 
 	ObjectPool pool(20);
 
+	auto it = pool.push();
+
+	if ((bool)it == true) {
+
+	}
+	
 	for (int i = 0; i < 10; ++i) pool.push();
 
 	for each(auto part in pool) part.isActive();

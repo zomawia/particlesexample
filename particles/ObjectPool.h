@@ -11,10 +11,16 @@ class ObjectPool {
 
 	_intern *m_data;
 	size_t m_size;
-	size_t openHead;
-	size_t fillHead;
+	size_t openHead, fillHead;
 
 public:
+	ObjectPool(const ObjectPool &)				= delete;
+	ObjectPool &operator=(const ObjectPool &)	= delete;
+	ObjectPool(ObjectPool &&)					= delete;
+	ObjectPool &operator=(ObjectPool &&)		= delete;
+	
+	~ObjectPool() { delete[] m_data; }
+	
 	ObjectPool(size_t a_size) : m_size(a_size), openHead(0), fillHead(m_size) {
 		m_data = new _intern[m_size];
 
@@ -30,6 +36,7 @@ public:
 
 		friend class ObjectPool;
 
+		//only the obpool can properly contruct an interator
 		iterator(ObjectPool *a_ref, size_t a_idx) :	m_ref(a_ref), m_idx(a_idx) {}
 
 	public:
@@ -37,9 +44,11 @@ public:
 
 		particle &operator*() { return m_ref->m_data[m_idx].data; }		//*this	(deref operator)
 		particle *operator->() { return &m_ref->m_data[m_idx].data; }	//this->(indirection oper)
+		particle *operator&(){return &m_ref->m_data[m_idx].data; } // &this reference of operator
 
-		const particle &operator*() const { return m_ref->m_data[m_idx].data; }		//*this(const deref)
+		const particle &operator* () const { return  m_ref->m_data[m_idx].data; }		//*this(const deref)
 		const particle *operator->() const { return &m_ref->m_data[m_idx].data; }	//this->(const indirect)
+		const particle *operator& () const { return &m_ref->m_data[m_idx].data; }	//&this ref of operator)
 
 		iterator &operator++() { m_idx = m_ref->m_data[m_idx].next; return *this; }	// (prefix increment)
 		iterator operator++(int) { auto that = *this; operator++(); return that; }	// (postix increment)
@@ -51,7 +60,10 @@ public:
 			m_idx < m_ref->m_size && 
 			!m_ref->m_data[m_idx].open; return this;
 		}
-		
+		operator particle*() { return operator&(); }
+		operator const particle*() const { return operator&(); }
+
+		iterator &free() { return *this = m_ref->pop(*this); };
 	};
 
 	//push the value into the pool and generate an iterator
